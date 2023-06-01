@@ -1,6 +1,8 @@
 import java.util.Map;
 /**
  * This class represents a critic who has a name and who has rated movies.
+ *
+ * @author Alvin
  */
 public class User {
     private String name;
