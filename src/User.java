@@ -1,16 +1,16 @@
-import java.util.List;
+import java.util.Map;
 /**
  * This class represents a critic who has a name and who has rated movies.
  */
 public class User {
     private String name;
-    private List<String> ratings;
+    private Map<Movie, Double> ratings;
     /**
      * Constructor to initialize a critic and their ratings
      * @param name of critic
      * @param ratings of movies
      */
-    public User(String name, List<String> ratings) {
+    public User(String name, Map<Movie, Double> ratings) {
         this.name = name;
         this.ratings = ratings;
     }
@@ -25,7 +25,7 @@ public class User {
      * Getter for critic's reviews
      * @return critic's ratings
      */
-    public List<String> getRatings() {
+    public Map<Movie, Double> getRatings() {
         return ratings;
     }
 }
