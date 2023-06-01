@@ -7,21 +7,21 @@ public class Movie {
     private final String title;
     private final String description;
     private final int year;
-    private final String genres;
+    private final String genre;
     private final int minutes;
     /**
      * Constructor to initialize the information of a movie
      * @param title what the movie is called
      * @param description what the movie is about
      * @param year when the movie was released
-     * @param genres what categories the movie belongs to
+     * @param genre what categories the movie belongs to
      * @param minutes duration of movie
      */
-    public Movie(String title, String description, int year, String genres, int minutes) {
+    public Movie(String title, String description, int year, String genre, int minutes) {
         this.title = title;
         this.description = description;
         this.year = year;
-        this.genres = genres;
+        this.genre = genre;
         this.minutes = minutes;
     }
     /**
@@ -46,11 +46,11 @@ public class Movie {
         return year;
     }
     /**
-     * Getter for movie genres
-     * @return movie genres
+     * Getter for movie genre
+     * @return movie genre
      */
-    public String getGenres() {
-        return genres;
+    public String getgenre() {
+        return genre;
     }
     /**
      * Getter for movie duration
