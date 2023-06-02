@@ -1,4 +1,7 @@
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+
 /**
  * This class represents a critic who has a name and who has rated movies.
  *
@@ -6,13 +9,17 @@ import java.util.Map;
  */
 public class User {
     private String name;
-    private Map<Movie, Double> ratings;
+    private Map<Movie, Integer> ratings;
+    public User() {
+        name = null;
+        ratings = null;
+    }
     /**
      * Constructor to initialize a critic and their ratings
      * @param name of critic
      * @param ratings of movies
      */
-    public User(String name, Map<Movie, Double> ratings) {
+    public User(String name, Map<Movie, Integer> ratings) {
         this.name = name;
         this.ratings = ratings;
     }
@@ -27,7 +34,15 @@ public class User {
      * Getter for critic's reviews
      * @return critic's ratings
      */
-    public Map<Movie, Double> getRatings() {
+    public Map<Movie, Integer> getRatings() {
         return ratings;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRatings(Map<Movie, Integer> ratings) {
+        this.ratings = ratings;
     }
 }
