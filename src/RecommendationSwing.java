@@ -10,10 +10,10 @@ public class RecommendationSwing extends JFrame {
     private JButton searchButton;
     private JButton exploreButton;
     private JButton filterButton;
-    private MovieDatabase data;
+    private RecommenderSystem data;
 
     public RecommendationSwing() {
-        data = new MovieDatabase("movies.txt");
+        data = new RecommenderSystem();
         setTitle("Movie Recommender");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(400, 300));
@@ -101,9 +101,7 @@ public class RecommendationSwing extends JFrame {
 
         // For this example, we'll clear the list and add some dummy search results
         movieListModel.clear();
-        movieListModel.addElement("Result 1");
-        movieListModel.addElement("Result 2");
-        movieListModel.addElement("Result 3");
+        movieListModel.addAll(data.search(query));
     }
 
     public static void main(String[] args) {
