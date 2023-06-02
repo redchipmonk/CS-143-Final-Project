@@ -4,18 +4,26 @@ import java.util.Map;
 
 public class RecommenderSystem {
     private Map<String, Movie> movies;
+    private List<String> titles;
     public RecommenderSystem() {
         movies = new MovieDatabase().getDatabase();
+        titles = movies.keySet().stream().toList();
     }
     public Map<String, Movie> getDatabase() {
         return movies;
     }
-    public void sortByTitle() {
-
-    }
-
-    public void sortByRating() {
-
+    public List<String> sortByTitle() {
+        int j;
+        for (int i = 0; i < titles.size(); i++) {
+            j = i - 1;
+            String temp = titles.get(i);
+            while (j >= 0 && titles.get(j).compareToIgnoreCase(temp) > 0) {
+                titles.set(j + 1, titles.get(j));
+                j--;
+            }
+            titles.set(j + 1, temp);
+        }
+        return titles;
     }
 
     public void sortByGenre() {
