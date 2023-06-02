@@ -10,8 +10,10 @@ public class RecommendationSwing extends JFrame {
     private JButton searchButton;
     private JButton exploreButton;
     private JButton filterButton;
+    private MovieDatabase data;
 
     public RecommendationSwing() {
+        data = new MovieDatabase("movies.txt");
         setTitle("Movie Recommender");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(400, 300));
@@ -89,6 +91,7 @@ public class RecommendationSwing extends JFrame {
         setContentPane(panel);
         pack();
         setLocationRelativeTo(null);
+        movieListModel.addAll(data.getDatabase().keySet());
         setVisible(true);
     }
 

@@ -1,14 +1,25 @@
 /**
- * This class is an immutable object representing the information of a movie.
+ * This class represents the details of a movie.
  *
  * @author Alvin Le
  */
 public class Movie {
-    private final String title;
-    private final String description;
-    private final int year;
-    private final String genre;
-    private final int minutes;
+    private String title;
+    private String description;
+    private int year;
+    private String genre;
+    private int minutes;
+
+    /**
+     * Default constructor creates an empty movie that contains no useful information
+     */
+    public Movie() {
+        title = null;
+        description = null;
+        year = -1;
+        genre = null;
+        minutes = -1;
+    }
     /**
      * Constructor to initialize the information of a movie
      * @param title what the movie is called
@@ -49,7 +60,7 @@ public class Movie {
      * Getter for movie genre
      * @return movie genre
      */
-    public String getgenre() {
+    public String getGenre() {
         return genre;
     }
     /**
@@ -58,5 +69,41 @@ public class Movie {
      */
     public int getMinutes() {
         return minutes;
+    }
+
+    /**
+     * Setter for movie title
+     * @param title movie title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    /**
+     * Setter for movie description
+     * @param description of movie
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    /**
+     * Setter for movie release year
+     * @param year when movie was released
+     */
+    public void setYear(int year) {
+        this.year = year;
+    }
+    /**
+     * Setter for movie genre
+     * @param genre movie
+     */
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+    /**
+     * Setter for movie duration
+     * @param minutes how long movie is
+     */
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
     }
 }
