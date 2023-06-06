@@ -29,9 +29,6 @@ public class SurveyNode {
     public void setChild(String s, SurveyNode node) {
 
     }
-    public SurveyNode getRecommendation() {
-        return null;
-    }
     public boolean isLeaf() {
         return right == null && left == null;
     }
