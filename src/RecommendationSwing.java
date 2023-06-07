@@ -1,8 +1,11 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecommendationSwing extends JFrame {
     private DefaultListModel<String> movieListModel;
@@ -14,7 +17,6 @@ public class RecommendationSwing extends JFrame {
     private JComboBox<String> filterComboBox;
     private RecommenderSystem data;
     private MovieDatabase movieData;
-    private SurveyNode rootNode;
     private SurveyTree tree;
 
     public RecommendationSwing() throws FileNotFoundException {
@@ -154,7 +156,7 @@ public class RecommendationSwing extends JFrame {
         surveyPanel.add(answerPanel, BorderLayout.CENTER);
     
         // Create the initial question and start the survey
-        SurveyNode currentNode = rootNode;
+        SurveyNode currentNode = tree.getRootNode();
         traverseSurvey(currentNode, questionLabel, answerPanel, surveyFrame);
     
         surveyFrame.setContentPane(surveyPanel);
@@ -167,46 +169,40 @@ public class RecommendationSwing extends JFrame {
         questionLabel.setText(node.getQuestion());
     
         answerPanel.removeAll();
-    
-        if (node.isLeaf()) {
-            // Display the text box for user input
-            JTextField textField = new JTextField();
-            textField.setPreferredSize(new Dimension(200, 30));
-            answerPanel.add(textField);
 
+        if (node.isLeaf()) {
+            List<String> list = data.generate(node.getQuestion().substring(2));
             JButton submitButton = new JButton("Submit");
             submitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String userResponse = textField.getText();
-                    // Process user response (e.g., save it, perform an action, etc.)
-                    System.out.println("User response: " + userResponse);
-                    surveyFrame.dispose(); // Close the survey frame
+                    surveyFrame.dispose();
+                    movieListModel.clear();
+                    movieListModel.addAll(list);
                 }
             });
             answerPanel.add(submitButton);
         } else {
+            String[] s = node.getQuestion().substring(2).split("//");
             // Display the answer buttons for the current question
-            JButton yesButton = new JButton("Yes");
-            yesButton.addActionListener(new ActionListener() {
+            JButton leftButton = new JButton(s[0]);
+            leftButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     // Get the next node based on "Yes" answer
-                    SurveyNode nextNode = node.getLeftNode();
-                    traverseSurvey(nextNode, questionLabel, answerPanel, surveyFrame);
+                    traverseSurvey(node.left, questionLabel, answerPanel, surveyFrame);
                 }
             });
-            answerPanel.add(yesButton);
-
-            JButton noButton = new JButton("No");
-            noButton.addActionListener(new ActionListener() {
+            answerPanel.add(leftButton);
+    
+            JButton rightButton = new JButton(s[1]);
+            rightButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     // Get the next node based on "No" answer
-                    SurveyNode nextNode = node.getRightNode();
-                    traverseSurvey(nextNode, questionLabel, answerPanel, surveyFrame);
+                    traverseSurvey(node.right, questionLabel, answerPanel, surveyFrame);
                 }
             });
-            answerPanel.add(noButton);
+            answerPanel.add(rightButton);
         }
-
+    
         surveyFrame.revalidate();
         surveyFrame.repaint();
     }
