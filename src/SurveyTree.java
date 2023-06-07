@@ -26,28 +26,6 @@ public class SurveyTree {
             }
             return node;
         }
-    public String takeSurvey(Scanner console) {
-         return takeSurvey(console, rootNode);
-    }
-    private String takeSurvey(Scanner console, SurveyNode node) {
-        if (node.isLeaf()) {
-            return node.getQuestion();
-        }
-        String[] parts = node.getQuestion().split("//");
-        String left = parts[0];
-        String right = parts[1];
-        String input = console.nextLine();
-        if (input.equalsIgnoreCase(left)) {
-            takeSurvey(console, node.left);
-        }
-        else if (input.equalsIgnoreCase(right)) {
-            takeSurvey(console, node.right);
-        }
-        else {
-            return "Invalid response";
-        }
-        return "Invalid response";
-    }
 
     public SurveyNode getRootNode() {
         return rootNode;

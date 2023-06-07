@@ -1,73 +1,79 @@
 import java.util.*;
 
 public class RecommenderSystem {
-    private Map<String, Movie> movies;
+    //private Map<String, Movie> movies;
     private List<String> titles;
-    private List<Movie> genre;
+    //private List<Movie> genre;
+    private MovieNode overallRoot;
     public RecommenderSystem() {
-        movies = new MovieDatabase().getDatabase();
-        titles = movies.keySet().stream().toList();
-        genre = new ArrayList<>();
-    }
-    public Map<String, Movie> getDatabase() {
-        return movies;
-    }
-    public List<String> sortByTitle() {
-        int j;
-        for (int i = 0; i < titles.size(); i++) {
-            j = i - 1;
-            String temp = titles.get(i);
-            while (j >= 0 && titles.get(j).compareToIgnoreCase(temp) > 0) {
-                titles.set(j + 1, titles.get(j));
-                j--;
-            }
-            titles.set(j + 1, temp);
+//        movies = new MovieDatabase().getDatabase();
+//        titles = movies.keySet().stream().toList();
+//        genre = new ArrayList<>();
+        overallRoot = new MovieList("movies.txt").getOutputRoot();
+        titles = new LinkedList<String>();
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            titles.add(current.data.getTitle());
+            current = current.next;
         }
+    }
+    public List<String> getTitles() {
         return titles;
     }
+//    public Map<String, Movie> getDatabase() {
+//        return movies;
+//    }
+    public MovieNode getOverallRoot() {
+        return overallRoot;
+    }
+//    public List<String> sortByTitle() {
+//        int j;
+//        for (int i = 0; i < titles.size(); i++) {
+//            j = i - 1;
+//            String temp = titles.get(i);
+//            while (j >= 0 && titles.get(j).compareToIgnoreCase(temp) > 0) {
+//                titles.set(j + 1, titles.get(j));
+//                j--;
+//            }
+//            titles.set(j + 1, temp);
+//        }
+//        return titles;
+//    }
     public List<String> filter(String answer) {
         List<String> list = new LinkedList<String>();
-        String s = answer;
-        for (Movie movie : movies.values()) {
-            if (movie.getGenre().equalsIgnoreCase(s)) {
-                list.add(movie.getTitle());
-
+        if (answer.equalsIgnoreCase("All")) {
+            return titles;
+        }
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            if (current.data.getGenre().equalsIgnoreCase(answer)) {
+                list.add(current.data.getTitle());
             }
-
+            current = current.next;
         }
         return list;
-    }
-    public List<Movie> sortByGenre(String input) {
-        for (int i = 0; i < movies.size(); i++) {
-            Movie temp = movies.get(titles.get(i));
-            if (temp.getGenre() == input) {
-                genre.add(temp);
-            }
-         
-        }
-        return genre;    
     }
 
     public List<String> search(String key) {
         List<String> result = new ArrayList<>();
-        for(String title : movies.keySet()) {
-            if (title.toLowerCase().contains(key.toLowerCase())) {
-                result.add(title);
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            if (current.data.getTitle().toLowerCase().contains(key.toLowerCase())) {
+                result.add(current.data.getTitle());
             }
+            current = current.next;
         }
         return result;
     }
-    public List<String> searchByGenre(String key) {
-        List<String> result = new ArrayList<>();
-        for (int i = 0; i < genre.size(); i++) {
-            Movie temp = genre.get(i);
-            if (temp.getTitle().toLowerCase().contains(key.toLowerCase())) {
-                result.add(temp.getTitle());
+    public Movie find(String key) {
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            if (current.data.getTitle().equalsIgnoreCase(key)) {
+                return current.data;
             }
-
+            current = current.next;
         }
-        
-        return result;
+        return null;
     }
     public List<String> generate(String answer) {
         List<String> list = new LinkedList<String>();
@@ -76,13 +82,15 @@ public class RecommenderSystem {
         String genre2 = "";
         String duration = "";
         String age = "";
+        MovieNode current = overallRoot;
         while (token.hasMoreElements()) {
             genre1 = token.nextToken();
             genre2 = token.nextToken();
             duration = token.nextToken();
             age = token.nextToken();
         }
-        for (Movie movie : movies.values()) {
+        while (current.next != null) {
+            Movie movie = current.data;
             String durations = "short";
             if (movie.getMinutes() >= 90) {
                 durations = "long";
@@ -95,12 +103,15 @@ public class RecommenderSystem {
                     durations.equalsIgnoreCase(duration) && ages.equalsIgnoreCase(age)) {
                 list.add(movie.getTitle());
             }
+            current = current.next;
         }
         return list;
     }
     public List<Movie> findRecommendation(Movie movie) {
         Map<Movie, Integer> results = new HashMap<>();
-        for (Movie temp : movies.values()) {
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            Movie temp = current.data;
             int connections = 0;
             if (temp.getGenre().equals(movie.getGenre())) {
                 connections++;
@@ -113,7 +124,9 @@ public class RecommenderSystem {
             if (temp.getMinutes() == movie.getMinutes()) {
                 connections++;
             }
+
             results.put(temp, connections);
+            current = current.next;
         }
         List<Movie> recommendations = new ArrayList<>();
 

@@ -15,7 +15,7 @@ public class RecommendationSwing extends JFrame {
     private JButton filterButton;
     private JComboBox<String> filterComboBox;
     private RecommenderSystem data;
-    private MovieDatabase movieData;
+//    private MovieDatabase movieData;
     private SurveyTree tree;
 
     public RecommendationSwing() throws FileNotFoundException {
@@ -40,9 +40,9 @@ public class RecommendationSwing extends JFrame {
         searchButton = new JButton("Search");
         exploreButton = new JButton("Explore");
         filterButton = new JButton("Filter");
-        filterComboBox = new JComboBox<>(new String[]{"All", "Action", "Comedy", "Drama", "Thriller", "Sci-Fi"});
+        filterComboBox = new JComboBox<>(new String[]{"All", "Action", "Comedy", "Drama", "Adventure", "Crime"});
         movieListModel = new DefaultListModel<>();
-        movieData = new MovieDatabase();
+//        movieData = new MovieDatabase();
         movieList = new JList<>(movieListModel);
         tree = new SurveyTree("survey.txt");
 
@@ -106,7 +106,7 @@ public class RecommendationSwing extends JFrame {
         setContentPane(panel);
         pack();
         setLocationRelativeTo(null);
-        movieListModel.addAll(data.getDatabase().keySet());
+        movieListModel.addAll(data.getTitles());
 
         // Initialize the survey tree
         //initializeSurveyTree();
@@ -130,11 +130,6 @@ public class RecommendationSwing extends JFrame {
         // Perform a search for movies based on the query
         movieListModel.clear();
         movieListModel.addAll(data.search(query));
-    }
-    private void searchMoviesByGenre(String query) {
-        movieListModel.clear();
-        //data.sortByGenre(query);
-        movieListModel.addAll(data.searchByGenre(query));
     }
 
     private void showSurveyPage() {
@@ -219,7 +214,7 @@ public class RecommendationSwing extends JFrame {
         // Create a new JFrame or dialog to display the movie details
         
         JFrame movieFrame = new JFrame(movieName);
-        Movie movie = movieData.getDatabase().get(movieName);
+        Movie movie = data.find(movieName);
         movieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         movieFrame.setPreferredSize(new Dimension(600, 600));
 
@@ -236,7 +231,7 @@ public class RecommendationSwing extends JFrame {
         detailsTextArea.append("Duration: " + movie.getMinutes() + " minutes\n\n");
         detailsTextArea.append("Other movies: \n");
         List<Movie> find = data.findRecommendation(movie);
-        for (int i = 0; i < find.size(); i++) {
+        for (int i = 1; i < 4; i++) {
             detailsTextArea.append(find.get(i).getTitle() + "\n");
         }
         // Add the text area to the movie frame
