@@ -11,23 +11,11 @@ public class SurveyNode {
         return question;
     }
 
-    public SurveyNode getYesNode() {
+    public SurveyNode getLeftNode() {
         return left;
     }
-
-    public void setYesNode(SurveyNode yesNode) {
-        this.left = yesNode;
-    }
-
-    public SurveyNode getNoNode() {
+    public SurveyNode getRightNode() {
         return right;
-    }
-
-    public void setNoNode(SurveyNode noNode) {
-        this.right = noNode;
-    }
-    public void setChild(String s, SurveyNode node) {
-
     }
     public boolean isLeaf() {
         return right == null && left == null;

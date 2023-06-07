@@ -1,4 +1,3 @@
-import javax.naming.InvalidNameException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -42,8 +41,9 @@ public class RecommendationSwing extends JFrame {
         filterButton = new JButton("Filter");
         filterComboBox = new JComboBox<>(new String[]{"All", "Action", "Comedy", "Drama", "Thriller", "Sci-Fi"});
         movieListModel = new DefaultListModel<>();
+        movieData = new MovieDatabase();
         movieList = new JList<>(movieListModel);
-        tree = new SurveyTree("surveys.txt");
+        tree = new SurveyTree("survey.txt");
 
         // Set the search button action
         searchButton.addActionListener(new ActionListener() {
@@ -57,6 +57,7 @@ public class RecommendationSwing extends JFrame {
         exploreButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showSurveyPage();
+                initializeSurveyTree();
             }
         });
 
@@ -68,6 +69,13 @@ public class RecommendationSwing extends JFrame {
                 searchPanel.add(filterComboBox, BorderLayout.WEST);
                 searchPanel.revalidate();
                 searchPanel.repaint();
+            }
+        });
+
+        filterComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String genre = filterComboBox.getSelectedItem().toString();
+                searchMoviesByGenre(genre);
             }
         });
 
@@ -122,6 +130,7 @@ public class RecommendationSwing extends JFrame {
     }
     private void searchMoviesByGenre(String query) {
         movieListModel.clear();
+        //data.sortByGenre(query);
         movieListModel.addAll(data.searchByGenre(query));
     }
 
@@ -160,40 +169,55 @@ public class RecommendationSwing extends JFrame {
         answerPanel.removeAll();
     
         if (node.isLeaf()) {
-            // Display the recommended movie
-            SurveyNode recommendedMovie = node.getRecommendation();
-            JOptionPane.showMessageDialog(surveyFrame, "Recommended movie: " + recommendedMovie);
-            surveyFrame.dispose(); // Close the survey frame
+            // Display the text box for user input
+            JTextField textField = new JTextField();
+            textField.setPreferredSize(new Dimension(200, 30));
+            answerPanel.add(textField);
+
+            JButton submitButton = new JButton("Submit");
+            submitButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String userResponse = textField.getText();
+                    // Process user response (e.g., save it, perform an action, etc.)
+                    System.out.println("User response: " + userResponse);
+                    surveyFrame.dispose(); // Close the survey frame
+                }
+            });
+            answerPanel.add(submitButton);
         } else {
             // Display the answer buttons for the current question
             JButton yesButton = new JButton("Yes");
             yesButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     // Get the next node based on "Yes" answer
-                    SurveyNode nextNode = node.getYesNode();
+                    SurveyNode nextNode = node.getLeftNode();
                     traverseSurvey(nextNode, questionLabel, answerPanel, surveyFrame);
                 }
             });
             answerPanel.add(yesButton);
-    
+
             JButton noButton = new JButton("No");
             noButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     // Get the next node based on "No" answer
-                    SurveyNode nextNode = node.getNoNode();
+                    SurveyNode nextNode = node.getRightNode();
                     traverseSurvey(nextNode, questionLabel, answerPanel, surveyFrame);
                 }
             });
             answerPanel.add(noButton);
         }
-    
+
         surveyFrame.revalidate();
         surveyFrame.repaint();
     }
     private void initializeSurveyTree() {
+        try {
+            String filePath = "survey.txt"; // Replace with the actual file path
+            tree = new SurveyTree(filePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
-    
-    
     private void displayMovieDetails(String movieName) {
         // Create a new JFrame or dialog to display the movie details
         

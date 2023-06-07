@@ -97,4 +97,34 @@ public class MovieDatabase {
         }
         return null;
     }
+    public List<Movie> findRecommendation(Movie movie) {
+        Map<Movie, Integer> results = new HashMap<>();
+        for (Movie temp : database.values()) {
+            int connections = 0;
+            if (temp.getGenre().equals(movie.getGenre())) {
+                connections++;
+            }
+            
+            if (temp.getYear() == movie.getYear()) {
+                connections++;
+            }
+            
+            if (temp.getMinutes() == movie.getMinutes()) {
+                connections++;
+            }
+            results.put(temp, connections);
+        }
+        List<Movie> recommendations = new ArrayList<>();
+    
+        // Sort the movies based on the number of connections
+        List<Map.Entry<Movie, Integer>> sortedResults = new ArrayList<>(results.entrySet());
+        sortedResults.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        
+        // Add the movies with the highest connections to the recommendations list
+        for (Map.Entry<Movie, Integer> entry : sortedResults) {
+            recommendations.add(entry.getKey());
+        }
+        
+        return recommendations;
+    }
 }

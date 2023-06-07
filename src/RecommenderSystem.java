@@ -51,14 +51,13 @@ public class RecommenderSystem {
     public List<String> searchByGenre(String key) {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < genre.size(); i++) {
-            String temp = genre.get(i).getGenre();
-            if (!result.contains(temp)) {
-                result.add(temp);
+            Movie temp = genre.get(i);
+            if (temp.getTitle().toLowerCase().contains(key.toLowerCase())) {
+                result.add(temp.getTitle());
             }
 
         }
         
-
         return result;
     }
     
