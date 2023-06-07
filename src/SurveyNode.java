@@ -10,13 +10,6 @@ public class SurveyNode {
     public String getQuestion() {
         return question;
     }
-
-    public SurveyNode getLeftNode() {
-        return left;
-    }
-    public SurveyNode getRightNode() {
-        return right;
-    }
     public boolean isLeaf() {
         return right == null && left == null;
     }

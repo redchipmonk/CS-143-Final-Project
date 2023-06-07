@@ -76,7 +76,9 @@ public class RecommendationSwing extends JFrame {
         filterComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String genre = filterComboBox.getSelectedItem().toString();
-                searchMoviesByGenre(genre);
+                List<String> list = data.filter(genre);
+                movieListModel.clear();
+                movieListModel.addAll(list);
             }
         });
 
