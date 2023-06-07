@@ -25,7 +25,18 @@ public class RecommenderSystem {
         }
         return titles;
     }
+    public List<String> filter(String answer) {
+        List<String> list = new LinkedList<String>();
+        String s = answer;
+        for (Movie movie : movies.values()) {
+            if (movie.getGenre().equalsIgnoreCase(s)) {
+                list.add(movie.getTitle());
 
+            }
+
+        }
+        return list;
+    }
     public List<Movie> sortByGenre(String input) {
         for (int i = 0; i < movies.size(); i++) {
             Movie temp = movies.get(titles.get(i));

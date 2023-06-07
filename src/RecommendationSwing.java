@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecommendationSwing extends JFrame {
@@ -232,8 +231,12 @@ public class RecommendationSwing extends JFrame {
         detailsTextArea.append("Description: " + movie.getDescription() + "\n");
         detailsTextArea.append("Released date: " + movie.getYear() + "\n");
         detailsTextArea.append("Genre: " + movie.getGenre() + "\n");
-        detailsTextArea.append("Duration: " + movie.getMinutes() + " minutes\n");
-        
+        detailsTextArea.append("Duration: " + movie.getMinutes() + " minutes\n\n");
+        detailsTextArea.append("Other movies: \n");
+        List<Movie> find = data.findRecommendation(movie);
+        for (int i = 0; i < find.size(); i++) {
+            detailsTextArea.append(find.get(i).getTitle() + "\n");
+        }
         // Add the text area to the movie frame
         movieFrame.getContentPane().add(new JScrollPane(detailsTextArea));
         movieFrame.pack();
