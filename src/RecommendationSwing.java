@@ -13,6 +13,8 @@ public class RecommendationSwing extends JFrame {
     private JButton searchButton;
     private JButton exploreButton;
     private JButton filterButton;
+    private JButton addButton;
+    private JButton removeButton;
     private JComboBox<String> filterComboBox;
     private RecommenderSystem data;
 //    private MovieDatabase movieData;
@@ -41,6 +43,8 @@ public class RecommendationSwing extends JFrame {
         exploreButton = new JButton("Explore");
         filterButton = new JButton("Filter");
         filterComboBox = new JComboBox<>(new String[]{"All", "Action", "Comedy", "Drama", "Adventure", "Crime"});
+        addButton = new JButton("Add");
+        removeButton = new JButton("Remove");
         movieListModel = new DefaultListModel<>();
 //        movieData = new MovieDatabase();
         movieList = new JList<>(movieListModel);
@@ -81,6 +85,16 @@ public class RecommendationSwing extends JFrame {
                 movieListModel.addAll(list);
             }
         });
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showAddPage();
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //show remove page.
+            }
+        });
 
         // Set layout for the searchPanel
         searchPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -90,6 +104,9 @@ public class RecommendationSwing extends JFrame {
         searchPanel.add(searchButton);
         searchPanel.add(filterButton);
         searchPanel.add(exploreButton);
+        searchPanel.add(addButton);
+        searchPanel.add(removeButton);
+
 
         // Set the background color for the searchPanel
         searchPanel.setBackground(new Color(230, 230, 230));
@@ -131,7 +148,69 @@ public class RecommendationSwing extends JFrame {
         movieListModel.clear();
         movieListModel.addAll(data.search(query));
     }
+    private void showAddPage() {
+        // Create a new JFrame or dialog to display the survey page
+        JFrame addFrame = new JFrame("Add A Movie");
+        addFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        addFrame.setPreferredSize(new Dimension(400, 400));
+        // Create GUI components for the survey page
+        JPanel addPanel = new JPanel(new BorderLayout());
+        addPanel.setLayout(new GridLayout(6, 2));
+        addPanel.add(new JLabel("Title:"));
+        JTextField titleField = new JTextField();
+        addPanel.add(titleField);
 
+        // Description label and text field
+        addPanel.add(new JLabel("Description:"));
+        JTextField descriptionField = new JTextField();
+        addPanel.add(descriptionField);
+
+        // Year label and text field
+        addPanel.add(new JLabel("Year:"));
+        JTextField yearField = new JTextField();
+        addPanel.add(yearField);
+
+        // Genre label and text field
+        addPanel.add(new JLabel("Genre:"));
+        JTextField genreField = new JTextField();
+        addPanel.add(genreField);
+
+        // Minutes label and text field
+        addPanel.add(new JLabel("Minutes:"));
+        JTextField minutesField = new JTextField();
+        addPanel.add(minutesField);
+        // Create a label to display the survey question
+        JLabel AddLabel = new JLabel();
+        AddLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        AddLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        addPanel.add(AddLabel, BorderLayout.NORTH);
+    
+        JButton submitButton = new JButton("SUBMIT");
+        addPanel.add(submitButton);
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = titleField.getText();
+                String description = descriptionField.getText();
+                int year = Integer.parseInt(yearField.getText());
+                String genre = genreField.getText();
+                int minutes = Integer.parseInt(minutesField.getText());
+
+                // Create a new Movie object with the entered details
+                Movie movie = new Movie(title, description, year, genre, minutes);
+
+                // Perform any desired actions with the newly created movie
+            }
+        });
+
+        JPanel answerPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        addPanel.add(answerPanel, BorderLayout.CENTER);
+    
+        addFrame.setContentPane(addPanel);
+        addFrame.pack();
+        addFrame.setLocationRelativeTo(null);
+        addFrame.setVisible(true);
+    }
     private void showSurveyPage() {
         // Create a new JFrame or dialog to display the survey page
         JFrame surveyFrame = new JFrame("Survey");
