@@ -19,9 +19,6 @@ public class RecommenderSystem {
         return titles;
     }
 
-    public MovieNode getOverallRoot() {
-        return overallRoot;
-    }
     public MovieNode find(String key) {
         MovieNode current = overallRoot;
         while (current != null) {
