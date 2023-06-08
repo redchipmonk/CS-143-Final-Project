@@ -1,11 +1,13 @@
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.util.List;
-
+/**
+ * This class represents the operations and handling of the GUI. It imports the logic from RecommenderSystem.java
+ *
+ * @author Eric Im, Alvin Le
+ */
 public class RecommendationSwing extends JFrame {
     private DefaultListModel<String> movieListModel;
     private JList<String> movieList;
@@ -17,23 +19,23 @@ public class RecommendationSwing extends JFrame {
     private JButton removeButton;
     private JComboBox<String> filterComboBox;
     private RecommenderSystem data;
-    //    private MovieDatabase movieData;
     private SurveyTree tree;
-
+    /**
+     * Default constructor to initialize the GUI.
+     * @throws FileNotFoundException if file to read from is not found
+     */
     public RecommendationSwing() throws FileNotFoundException {
-        data = new RecommenderSystem();
+        data = new RecommenderSystem("movies.txt");
         initializeSurveyTree();
         setTitle("Movie Recommender");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
-
         // Set Nimbus Look and Feel
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         // Create GUI components
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -46,10 +48,8 @@ public class RecommendationSwing extends JFrame {
         addButton = new JButton("Add");
         removeButton = new JButton("Remove");
         movieListModel = new DefaultListModel<>();
-//        movieData = new MovieDatabase();
         movieList = new JList<>(movieListModel);
         tree = new SurveyTree("survey.txt");
-
         // Set the search button action
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -57,7 +57,6 @@ public class RecommendationSwing extends JFrame {
                 // searchMoviesByGenre(searchField.getText());
             }
         });
-
         // Set the explore button action
         exploreButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -65,7 +64,6 @@ public class RecommendationSwing extends JFrame {
                 initializeSurveyTree();
             }
         });
-
         // Set the filter button action
         filterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -76,7 +74,6 @@ public class RecommendationSwing extends JFrame {
                 searchPanel.repaint();
             }
         });
-
         filterComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String genre = filterComboBox.getSelectedItem().toString();
@@ -90,7 +87,6 @@ public class RecommendationSwing extends JFrame {
                 }
             }
         });
-
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showAddPage();
@@ -101,10 +97,8 @@ public class RecommendationSwing extends JFrame {
                 showRemovePage();
             }
         });
-
         // Set layout for the searchPanel
         searchPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
         // Add components to the search panel
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
@@ -112,28 +106,21 @@ public class RecommendationSwing extends JFrame {
         searchPanel.add(exploreButton);
         searchPanel.add(addButton);
         searchPanel.add(removeButton);
-
-
         // Set the background color for the searchPanel
         searchPanel.setBackground(new Color(230, 230, 230));
-
         // Set the font and background color for the movieList
         movieList.setFont(new Font("Arial", Font.PLAIN, 14));
         movieList.setBackground(Color.white);
-
         // Add components to the main panel
         panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(new JScrollPane(movieList), BorderLayout.CENTER);
-
         // Set the main panel as the content pane
         setContentPane(panel);
         pack();
         setLocationRelativeTo(null);
         movieListModel.addAll(data.getTitles());
-
         // Initialize the survey tree
         //initializeSurveyTree();
-
         // Add mouse listener to the movie list
         movieList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -144,16 +131,20 @@ public class RecommendationSwing extends JFrame {
                 }
             }
         });
-
         setVisible(true);
     }
-
-
+    /**
+     * Resets the display with movies that matches the search.
+     * @param query String to search for within movie title
+     */
     private void searchMovies(String query) {
         // Perform a search for movies based on the query
         movieListModel.clear();
         movieListModel.addAll(data.search(query));
     }
+    /**
+     * Displays the add form to add a movie to the list
+     */
     private void showAddPage() {
         // Create a new JFrame or dialog to display the survey page
         JFrame addFrame = new JFrame("Add A Movie");
@@ -165,22 +156,18 @@ public class RecommendationSwing extends JFrame {
         addPanel.add(new JLabel("Title:"));
         JTextField titleField = new JTextField();
         addPanel.add(titleField);
-
         // Description label and text field
         addPanel.add(new JLabel("Description:"));
         JTextField descriptionField = new JTextField();
         addPanel.add(descriptionField);
-
         // Year label and text field
         addPanel.add(new JLabel("Year:"));
         JTextField yearField = new JTextField();
         addPanel.add(yearField);
-
         // Genre label and text field
         addPanel.add(new JLabel("Genre:"));
         JTextField genreField = new JTextField();
         addPanel.add(genreField);
-
         // Minutes label and text field
         addPanel.add(new JLabel("Minutes:"));
         JTextField minutesField = new JTextField();
@@ -190,7 +177,6 @@ public class RecommendationSwing extends JFrame {
         AddLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         AddLabel.setHorizontalAlignment(SwingConstants.CENTER);
         addPanel.add(AddLabel, BorderLayout.NORTH);
-
         JButton submitButton = new JButton("SUBMIT");
         addPanel.add(submitButton);
         submitButton.addActionListener(new ActionListener() {
@@ -212,15 +198,16 @@ public class RecommendationSwing extends JFrame {
                 movieListModel.addAll(data.getTitles());
             }
         });
-
         JPanel answerPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         addPanel.add(answerPanel, BorderLayout.CENTER);
-
         addFrame.setContentPane(addPanel);
         addFrame.pack();
         addFrame.setLocationRelativeTo(null);
         addFrame.setVisible(true);
     }
+    /**
+     * Displays the remove form to remove a movie from the list.
+     */
     private void showRemovePage() {
         // Create a new JFrame or dialog to display the survey page
         JFrame removeFrame = new JFrame("Remove A Movie");
@@ -248,44 +235,46 @@ public class RecommendationSwing extends JFrame {
         removeFrame.pack();
         removeFrame.setLocationRelativeTo(null);
         removeFrame.setVisible(true);
-
     }
+    /**
+     * Displays the survey page to prompt the user to answer the survey.
+     */
     private void showSurveyPage() {
         // Create a new JFrame or dialog to display the survey page
         JFrame surveyFrame = new JFrame("Survey");
         surveyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         surveyFrame.setPreferredSize(new Dimension(400, 400));
-
         // Create GUI components for the survey page
         JPanel surveyPanel = new JPanel(new BorderLayout());
-
         // Create a label to display the survey question
         JLabel questionLabel = new JLabel();
         questionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         questionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         surveyPanel.add(questionLabel, BorderLayout.NORTH);
-
         // Create a panel to hold the answer buttons
         JPanel answerPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         surveyPanel.add(answerPanel, BorderLayout.CENTER);
-
         // Create the initial question and start the survey
         SurveyNode currentNode = tree.getRootNode();
         traverseSurvey(currentNode, questionLabel, answerPanel, surveyFrame);
-
         surveyFrame.setContentPane(surveyPanel);
         surveyFrame.pack();
         surveyFrame.setLocationRelativeTo(null);
         surveyFrame.setVisible(true);
     }
-
+    /**
+     * Takes the user through the survey and generates recommendations from the survey results.
+     * @param node current node to answer
+     * @param questionLabel label of question
+     * @param answerPanel panel of two choices
+     * @param surveyFrame frame of survey
+     */
     private void traverseSurvey(SurveyNode node, JLabel questionLabel, JPanel answerPanel, JFrame surveyFrame) {
         questionLabel.setText(node.getQuestion());
-
         answerPanel.removeAll();
-
         if (node.isLeaf()) {
             List<String> list = data.generate(node.getQuestion().substring(2));
+            //creates a submit button once answer is reached
             JButton submitButton = new JButton("Submit");
             submitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -295,7 +284,8 @@ public class RecommendationSwing extends JFrame {
                 }
             });
             answerPanel.add(submitButton);
-        } else {
+        }
+        else {
             String[] s = node.getQuestion().substring(2).split("//");
             // Display the answer buttons for the current question
             JButton leftButton = new JButton(s[0]);
@@ -306,7 +296,6 @@ public class RecommendationSwing extends JFrame {
                 }
             });
             answerPanel.add(leftButton);
-
             JButton rightButton = new JButton(s[1]);
             rightButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -316,27 +305,30 @@ public class RecommendationSwing extends JFrame {
             });
             answerPanel.add(rightButton);
         }
-
         surveyFrame.revalidate();
         surveyFrame.repaint();
     }
+    /**
+     * Initializes the survey tree to read from file.
+     */
     private void initializeSurveyTree() {
         try {
-            String filePath = "survey.txt"; // Replace with the actual file path
-            tree = new SurveyTree(filePath);
-        } catch (FileNotFoundException e) {
+            tree = new SurveyTree("survey.txt");
+        }
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
+    /**
+     * Displays the details of a movie object.
+     * @param movieName title to search for
+     */
     private void displayMovieDetails(String movieName) {
         // Create a new JFrame or dialog to display the movie details
-
         JFrame movieFrame = new JFrame(movieName);
         Movie movie = data.find(movieName).data;
         movieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         movieFrame.setPreferredSize(new Dimension(600, 600));
-
-
         // Create a text area to display the movie details
         JTextArea detailsTextArea = new JTextArea();
         detailsTextArea.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -358,7 +350,10 @@ public class RecommendationSwing extends JFrame {
         movieFrame.setLocationRelativeTo(null);
         movieFrame.setVisible(true);
     }
-
+    /**
+     * Runs the GUI.
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

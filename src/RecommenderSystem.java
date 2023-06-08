@@ -1,20 +1,22 @@
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
-/*
- * This class represents the movie recommender system. It handles all interactions with the 
- * collection of movies.
+/**
+ * This class represents the movie recommender system. It handles all interactions with the collection of movies and
+ * most of the logic.
+ *
+ * @author Alvin Le, Eric Im
  */
 public class RecommenderSystem {
-    private List<String> titles;
+    private final List<String> titles;
     private MovieNode overallRoot;
-    /*
-     * The constructor initializes the recommender system by loading movie data from a file. 
-     * It creates a linked structure of MovieNode objects based on the movie data.
+    /**
+     * Default constructor that initializes the recommender system by loading movie data from a file.
+     * It creates a linked structure of MovieNode objects based on the movie data and list of titles to display.
+     *
+     * @param fileName name of file to read from
      */
-    public RecommenderSystem() {
-        overallRoot = new MovieList("movies.txt").getOutputRoot();
+    public RecommenderSystem(String fileName) {
+        overallRoot = new MovieList(fileName).getOutputRoot();
         titles = new ArrayList<String>();
         MovieNode current = overallRoot;
         while (current.next != null) {
@@ -22,22 +24,17 @@ public class RecommenderSystem {
             current = current.next;
         }
     }
-    /*
+    /**
      * This method returns the list of titles of the movies.
+     * @return list of movie titles
      */
     public List<String> getTitles() {
         return titles;
     }
-    /*
-     * This method returns the root.
-     */
-    public MovieNode getOverallRoot() {
-        return overallRoot;
-    }
-    /*
-     * This method iterates through the linkedlist to find the title that matches
-     * the title passed in from the parameter.
-     * returns the node if found, else null.
+    /**
+     * Search function of the movie node that matches the title of the key.
+     * @param key movie title to search for
+     * @return movie node that contains the movie containing the title
      */
     public MovieNode find(String key) {
         MovieNode current = overallRoot;
@@ -49,9 +46,10 @@ public class RecommenderSystem {
         }
         return null;
     }
-    /*
-     * This method adds a movie to the end of the linkedlist. It also adds to the last
-     * line of the "movies.txt" file in the same format as the other movies.
+    /**
+     * This method adds a movie to the end of the titles list and linked movies list. It also adds to the last line of
+     * the "movies.txt" file in the same format as the other movies.
+     * @param movie to add to display
      */
     public void add(Movie movie) {
         MovieNode current = overallRoot;
@@ -70,9 +68,9 @@ public class RecommenderSystem {
             System.out.println(e.getMessage());
         }
     }
-    /*
-     * This method removes the movie title that matches the title passed in as parameter.
-     * 
+    /**
+     * This method removes the given movie from titles list and movies linked list.
+     * @param title of movie to remove
      */
     public void remove(String title) {
         if (overallRoot.data.getTitle().equalsIgnoreCase(title)) {
@@ -87,9 +85,10 @@ public class RecommenderSystem {
         previous.next = current.next;
         titles.remove(title);
     }
-    /*
-     * This method iterates through the linkedlist and adds the movies that match the 
-     * title passed in the parameter. returns a list of movies.
+    /**
+     * Searches for movies with titles that contain a keyword.
+     * @param key entered in search bar to look for certain movies
+     * @return list of movies that contain the key in their title
      */
     public List<String> search(String key) {
         List<String> result = new ArrayList<>();
@@ -102,12 +101,14 @@ public class RecommenderSystem {
         }
         return result;
     }
-    /*
-     * This method handles the algorithm behind the filter function. it iterates through the
-     * movie, comparing it's genre. returns the list of movies that match the genre.
+    /**
+     * Searches for movies that match the given genre
+     * @param answer genre to search for
+     * @return List of movies that have the given genre
      */
     public List<String> filter(String answer) {
         List<String> list = new LinkedList<String>();
+        //if selected genre is all genres
         if (answer.equalsIgnoreCase("All")) {
             return titles;
         }
@@ -120,10 +121,11 @@ public class RecommenderSystem {
         }
         return list;
     }
-    /*
-     * Generates a list of movie titles based on multiple criteria, 
-     * including genre, duration, and age. The criteria are provided as a string with delimiter "//". 
-     * It returns a list of movie titles that match the criteria.
+    /**
+     * Generates a list of movie titles based on survey answer. The criteria are provided as a string with delimiter
+     * "//". It returns a list of movie titles that match the criteria.
+     * @param answer of survey
+     * @return list of movies that match the survey results
      */
     public List<String> generate(String answer) {
         List<String> list = new LinkedList<String>();
@@ -142,10 +144,12 @@ public class RecommenderSystem {
         while (current.next != null) {
             Movie movie = current.data;
             String durations = "short";
+            //movie is considered long if it is over an hour and a half
             if (movie.getMinutes() >= 90) {
                 durations = "long";
             }
             String ages = "new";
+            //a movie is considered old if it is before the year 2000
             if (movie.getYear() <= 2000) {
                 ages = "old";
             }
@@ -157,11 +161,11 @@ public class RecommenderSystem {
         }
         return list;
     }
-    /*
-     * Finds movie recommendations based on the similarity between the given movie
-     * and other movies in the recommender system. 
-     * It calculates the number of connections (similar attributes) between movies and 
-     * returns a list of recommended movies sorted by the number of connections.
+    /**
+     * Finds movie recommendations based on the similarity between the given movie and other movies in the recommender
+     * system. It calculates the number of connections (similar attributes) between movies.
+     * @param movie movie to generate recommendations for
+     * @return list of movies sorted by most similar
      */
     public List<Movie> findRecommendation(Movie movie) {
         Map<Movie, Integer> results = new HashMap<>();
@@ -172,29 +176,23 @@ public class RecommenderSystem {
             if (temp.getGenre().equals(movie.getGenre())) {
                 connections++;
             }
-
             if (temp.getYear() == movie.getYear()) {
                 connections++;
             }
-
             if (temp.getMinutes() == movie.getMinutes()) {
                 connections++;
             }
-
             results.put(temp, connections);
             current = current.next;
         }
         List<Movie> recommendations = new ArrayList<>();
-
         // Sort the movies based on the number of connections
         List<Map.Entry<Movie, Integer>> sortedResults = new ArrayList<>(results.entrySet());
         sortedResults.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
-
         // Add the movies with the highest connections to the recommendations list
         for (Map.Entry<Movie, Integer> entry : sortedResults) {
             recommendations.add(entry.getKey());
         }
-
         return recommendations;
     }
 }

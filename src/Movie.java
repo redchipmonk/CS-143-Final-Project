@@ -9,7 +9,6 @@ public class Movie {
     private int year;
     private String genre;
     private int minutes;
-
     /**
      * Default constructor creates an empty movie that contains no useful information
      */
