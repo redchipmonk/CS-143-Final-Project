@@ -106,8 +106,4 @@ public class Movie {
     public void setMinutes(int minutes) {
         this.minutes = minutes;
     }
-    @Override
-    public String toString() {
-        return title + "//" + description + "//" + year + "//" + genre + "//" + minutes;
-    }
 }

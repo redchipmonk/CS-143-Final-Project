@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecommendationSwing extends JFrame {
@@ -18,6 +17,7 @@ public class RecommendationSwing extends JFrame {
     private JButton removeButton;
     private JComboBox<String> filterComboBox;
     private RecommenderSystem data;
+    //    private MovieDatabase movieData;
     private SurveyTree tree;
 
     public RecommendationSwing() throws FileNotFoundException {
@@ -81,17 +81,16 @@ public class RecommendationSwing extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String genre = filterComboBox.getSelectedItem().toString();
                 List<String> list = data.filter(genre);
-                searchMovies(searchField.getText());
-                List<String> temp = new ArrayList<>();
+                movieListModel.clear();
                 for (int i = 0; i < list.size(); i++) {
-                    if (movieListModel.contains(list.get(i))) {
-                        temp.add(list.get(i));
+                    if (!movieListModel.contains(list.get(i)) && list.get(i).contains(searchField.getText())) {
+                        searchMovies(searchField.getText());
+                        movieListModel.addElement(list.get(i));
                     }
                 }
-                movieListModel.clear();
-                movieListModel.addAll(temp);
             }
         });
+
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showAddPage();

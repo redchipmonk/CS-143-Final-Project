@@ -2,9 +2,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-
+/*
+ * The MovieList class is responsible for reading movie data from a file 
+ * and creating a linked list of MovieNode objects. 
+ */
 public class MovieList {
     private MovieNode outputRoot;
+    /*
+     * The constructor takes a fileName parameter representing the name of the file containing movie data. 
+     * It reads the file, creates Movie objects from the data, 
+     * and constructs a linked list of MovieNode objects.
+     */
     public MovieList(String fileName) {
         try {
             Scanner scan = new Scanner(new File(fileName));
@@ -34,6 +42,9 @@ public class MovieList {
             System.out.println("Invalid file");
         }
     }
+    /*
+     * returns the root.
+     */
     public MovieNode getOutputRoot() {
         return outputRoot;
     }
