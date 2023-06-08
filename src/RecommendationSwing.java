@@ -17,7 +17,7 @@ public class RecommendationSwing extends JFrame {
     private JButton removeButton;
     private JComboBox<String> filterComboBox;
     private RecommenderSystem data;
-//    private MovieDatabase movieData;
+    //    private MovieDatabase movieData;
     private SurveyTree tree;
 
     public RecommendationSwing() throws FileNotFoundException {
@@ -54,7 +54,7 @@ public class RecommendationSwing extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchMovies(searchField.getText());
-               // searchMoviesByGenre(searchField.getText());
+                // searchMoviesByGenre(searchField.getText());
             }
         });
 
@@ -92,7 +92,7 @@ public class RecommendationSwing extends JFrame {
         });
         removeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //show remove page.
+                showRemovePage();
             }
         });
 
@@ -155,7 +155,7 @@ public class RecommendationSwing extends JFrame {
         addFrame.setPreferredSize(new Dimension(400, 400));
         // Create GUI components for the survey page
         JPanel addPanel = new JPanel(new BorderLayout());
-        addPanel.setLayout(new GridLayout(6, 2));
+        addPanel.setLayout(new GridLayout(7, 2));
         addPanel.add(new JLabel("Title:"));
         JTextField titleField = new JTextField();
         addPanel.add(titleField);
@@ -184,7 +184,7 @@ public class RecommendationSwing extends JFrame {
         AddLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         AddLabel.setHorizontalAlignment(SwingConstants.CENTER);
         addPanel.add(AddLabel, BorderLayout.NORTH);
-    
+
         JButton submitButton = new JButton("SUBMIT");
         addPanel.add(submitButton);
         submitButton.addActionListener(new ActionListener() {
@@ -200,49 +200,82 @@ public class RecommendationSwing extends JFrame {
                 Movie movie = new Movie(title, description, year, genre, minutes);
 
                 // Perform any desired actions with the newly created movie
+                data.add(movie);
+                addFrame.dispose();
+                movieListModel.clear();
+                movieListModel.addAll(data.getTitles());
             }
         });
 
         JPanel answerPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         addPanel.add(answerPanel, BorderLayout.CENTER);
-    
+
         addFrame.setContentPane(addPanel);
         addFrame.pack();
         addFrame.setLocationRelativeTo(null);
         addFrame.setVisible(true);
+    }
+    private void showRemovePage() {
+        // Create a new JFrame or dialog to display the survey page
+        JFrame removeFrame = new JFrame("Remove A Movie");
+        removeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        removeFrame.setPreferredSize(new Dimension(400, 400));
+        // Create GUI components for the survey page
+        JPanel removePanel = new JPanel(new BorderLayout());
+        removePanel.setLayout(new GridLayout(6, 2));
+        removePanel.add(new JLabel("Title of the movie you would like to remove?"));
+        JTextField titleField = new JTextField();
+        removePanel.add(titleField);
+        JButton submitButton = new JButton("SUBMIT");
+        removePanel.add(submitButton);
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = titleField.getText();
+                data.remove(title);
+                removeFrame.dispose();
+                movieListModel.clear();
+                movieListModel.addAll(data.getTitles());
+            }
+        });
+        removeFrame.setContentPane(removePanel);
+        removeFrame.pack();
+        removeFrame.setLocationRelativeTo(null);
+        removeFrame.setVisible(true);
+
     }
     private void showSurveyPage() {
         // Create a new JFrame or dialog to display the survey page
         JFrame surveyFrame = new JFrame("Survey");
         surveyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         surveyFrame.setPreferredSize(new Dimension(400, 400));
-    
+
         // Create GUI components for the survey page
         JPanel surveyPanel = new JPanel(new BorderLayout());
-    
+
         // Create a label to display the survey question
         JLabel questionLabel = new JLabel();
         questionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         questionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         surveyPanel.add(questionLabel, BorderLayout.NORTH);
-    
+
         // Create a panel to hold the answer buttons
         JPanel answerPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         surveyPanel.add(answerPanel, BorderLayout.CENTER);
-    
+
         // Create the initial question and start the survey
         SurveyNode currentNode = tree.getRootNode();
         traverseSurvey(currentNode, questionLabel, answerPanel, surveyFrame);
-    
+
         surveyFrame.setContentPane(surveyPanel);
         surveyFrame.pack();
         surveyFrame.setLocationRelativeTo(null);
         surveyFrame.setVisible(true);
     }
-    
+
     private void traverseSurvey(SurveyNode node, JLabel questionLabel, JPanel answerPanel, JFrame surveyFrame) {
         questionLabel.setText(node.getQuestion());
-    
+
         answerPanel.removeAll();
 
         if (node.isLeaf()) {
@@ -267,7 +300,7 @@ public class RecommendationSwing extends JFrame {
                 }
             });
             answerPanel.add(leftButton);
-    
+
             JButton rightButton = new JButton(s[1]);
             rightButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -277,7 +310,7 @@ public class RecommendationSwing extends JFrame {
             });
             answerPanel.add(rightButton);
         }
-    
+
         surveyFrame.revalidate();
         surveyFrame.repaint();
     }
@@ -291,13 +324,13 @@ public class RecommendationSwing extends JFrame {
     }
     private void displayMovieDetails(String movieName) {
         // Create a new JFrame or dialog to display the movie details
-        
+
         JFrame movieFrame = new JFrame(movieName);
-        Movie movie = data.find(movieName);
+        Movie movie = data.find(movieName).data;
         movieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         movieFrame.setPreferredSize(new Dimension(600, 600));
 
-        
+
         // Create a text area to display the movie details
         JTextArea detailsTextArea = new JTextArea();
         detailsTextArea.setFont(new Font("Arial", Font.PLAIN, 14));

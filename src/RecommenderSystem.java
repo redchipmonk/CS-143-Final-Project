@@ -1,16 +1,14 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 
 public class RecommenderSystem {
-    //private Map<String, Movie> movies;
     private List<String> titles;
-    //private List<Movie> genre;
     private MovieNode overallRoot;
     public RecommenderSystem() {
-//        movies = new MovieDatabase().getDatabase();
-//        titles = movies.keySet().stream().toList();
-//        genre = new ArrayList<>();
         overallRoot = new MovieList("movies.txt").getOutputRoot();
-        titles = new LinkedList<String>();
+        titles = new ArrayList<String>();
         MovieNode current = overallRoot;
         while (current.next != null) {
             titles.add(current.data.getTitle());
@@ -20,25 +18,61 @@ public class RecommenderSystem {
     public List<String> getTitles() {
         return titles;
     }
-//    public Map<String, Movie> getDatabase() {
-//        return movies;
-//    }
+
     public MovieNode getOverallRoot() {
         return overallRoot;
     }
-//    public List<String> sortByTitle() {
-//        int j;
-//        for (int i = 0; i < titles.size(); i++) {
-//            j = i - 1;
-//            String temp = titles.get(i);
-//            while (j >= 0 && titles.get(j).compareToIgnoreCase(temp) > 0) {
-//                titles.set(j + 1, titles.get(j));
-//                j--;
-//            }
-//            titles.set(j + 1, temp);
-//        }
-//        return titles;
-//    }
+    public MovieNode find(String key) {
+        MovieNode current = overallRoot;
+        while (current != null) {
+            if (current.data.getTitle().equalsIgnoreCase(key)) {
+                return current;
+            }
+            current = current.next;
+        }
+        return null;
+    }
+    public void add(Movie movie) {
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.next = new MovieNode(movie);
+        titles.add(movie.getTitle());
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream("movies.txt", true));
+            out.println();
+            out.print(movie.toString());
+            out.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void remove(String title) {
+        if (overallRoot.data.getTitle().equalsIgnoreCase(title)) {
+            overallRoot = overallRoot.next;
+            titles.remove(0);
+        }
+        MovieNode current = find(title);
+        MovieNode previous = overallRoot;
+        while (previous.next != current) {
+            previous = previous.next;
+        }
+        previous.next = current.next;
+        titles.remove(title);
+    }
+    public List<String> search(String key) {
+        List<String> result = new ArrayList<>();
+        MovieNode current = overallRoot;
+        while (current.next != null) {
+            if (current.data.getTitle().toLowerCase().contains(key.toLowerCase())) {
+                result.add(current.data.getTitle());
+            }
+            current = current.next;
+        }
+        return result;
+    }
     public List<String> filter(String answer) {
         List<String> list = new LinkedList<String>();
         if (answer.equalsIgnoreCase("All")) {
@@ -53,28 +87,19 @@ public class RecommenderSystem {
         }
         return list;
     }
-
-    public List<String> search(String key) {
-        List<String> result = new ArrayList<>();
-        MovieNode current = overallRoot;
-        while (current.next != null) {
-            if (current.data.getTitle().toLowerCase().contains(key.toLowerCase())) {
-                result.add(current.data.getTitle());
-            }
-            current = current.next;
-        }
-        return result;
-    }
-    public Movie find(String key) {
-        MovieNode current = overallRoot;
-        while (current.next != null) {
-            if (current.data.getTitle().equalsIgnoreCase(key)) {
-                return current.data;
-            }
-            current = current.next;
-        }
-        return null;
-    }
+//        public List<String> sortByTitle() {
+//        int j;
+//        for (int i = 0; i < titles.size(); i++) {
+//            j = i - 1;
+//            String temp = titles.get(i);
+//            while (j >= 0 && titles.get(j).compareToIgnoreCase(temp) > 0) {
+//                titles.set(j + 1, titles.get(j));
+//                j--;
+//            }
+//            titles.set(j + 1, temp);
+//        }
+//        return titles;
+//    }
     public List<String> generate(String answer) {
         List<String> list = new LinkedList<String>();
         StringTokenizer token = new StringTokenizer(answer, "//");
