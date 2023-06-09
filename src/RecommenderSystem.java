@@ -115,7 +115,7 @@ public class RecommenderSystem {
         MovieNode current = overallRoot;
         while (current != null) {
             String title = current.data.getTitle().toLowerCase();
-            if (current.data.getGenre().equalsIgnoreCase(answer) && title.contains(query)) {
+            if (current.data.getGenre().equalsIgnoreCase(answer) && title.contains(query.toLowerCase())) {
                 list.add(current.data.getTitle());
             }
             current = current.next;
