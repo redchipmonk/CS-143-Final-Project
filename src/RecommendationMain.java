@@ -1,6 +1,8 @@
 import java.io.FileNotFoundException;
 /**
  * This class is the main runner class for the program.
+ *
+ * @author Eric Im
  */
 public class RecommendationMain {
     /**
