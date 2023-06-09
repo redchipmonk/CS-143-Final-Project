@@ -19,7 +19,7 @@ public class RecommenderSystem {
         overallRoot = new MovieList(fileName).getOutputRoot();
         titles = new ArrayList<String>();
         MovieNode current = overallRoot;
-        while (current.next != null) {
+        while (current != null) {
             titles.add(current.data.getTitle());
             current = current.next;
         }
@@ -93,7 +93,7 @@ public class RecommenderSystem {
     public List<String> search(String key) {
         List<String> result = new ArrayList<>();
         MovieNode current = overallRoot;
-        while (current.next != null) {
+        while (current != null) {
             if (current.data.getTitle().toLowerCase().contains(key.toLowerCase())) {
                 result.add(current.data.getTitle());
             }
@@ -106,15 +106,16 @@ public class RecommenderSystem {
      * @param answer genre to search for
      * @return List of movies that have the given genre
      */
-    public List<String> filter(String answer) {
+    public List<String> filter(String answer, String query) {
         List<String> list = new LinkedList<String>();
         //if selected genre is all genres
         if (answer.equalsIgnoreCase("All")) {
-            return titles;
+            return search(query);
         }
         MovieNode current = overallRoot;
-        while (current.next != null) {
-            if (current.data.getGenre().equalsIgnoreCase(answer)) {
+        while (current != null) {
+            String title = current.data.getTitle().toLowerCase();
+            if (current.data.getGenre().equalsIgnoreCase(answer) && title.contains(query)) {
                 list.add(current.data.getTitle());
             }
             current = current.next;
@@ -141,11 +142,11 @@ public class RecommenderSystem {
             duration = token.nextToken();
             age = token.nextToken();
         }
-        while (current.next != null) {
+        while (current != null) {
             Movie movie = current.data;
             String durations = "short";
-            //movie is considered long if it is over an hour and a half
-            if (movie.getMinutes() >= 90) {
+            //movie is considered long if it is over 2 hours
+            if (movie.getMinutes() >= 120) {
                 durations = "long";
             }
             String ages = "new";
@@ -170,18 +171,23 @@ public class RecommenderSystem {
     public List<Movie> findRecommendation(Movie movie) {
         Map<Movie, Integer> results = new HashMap<>();
         MovieNode current = overallRoot;
-        while (current.next != null) {
+        //decade of movie -ex 2002 = 2000
+        int decade = movie.getYear() - (movie.getYear()) % 10;
+
+        while (current != null) {
             Movie temp = current.data;
             int connections = 0;
             if (temp.getGenre().equals(movie.getGenre())) {
+                connections += 4;
+            }
+            if (temp.getYear() >= decade && temp.getYear() <= decade + 10) {
+                connections += 2;
+            }
+            //if temp is close to duration of movie
+            if (temp.getMinutes() >= movie.getMinutes() - 30 && temp.getMinutes() <= movie.getMinutes() + 30) {
                 connections++;
             }
-            if (temp.getYear() == movie.getYear()) {
-                connections++;
-            }
-            if (temp.getMinutes() == movie.getMinutes()) {
-                connections++;
-            }
+            connections += computeSimilarity(movie.getTitle(), temp.getTitle()) / 4;
             results.put(temp, connections);
             current = current.next;
         }
@@ -194,5 +200,27 @@ public class RecommenderSystem {
             recommendations.add(entry.getKey());
         }
         return recommendations;
+    }
+    /**
+     * Calculates the similarity between 2 movie titles by how many similar characters in order
+     * @param title1 Movie title
+     * @param title2 Movie title
+     * @return count of similar characters, 100 if comparing same movie
+     */
+    private int computeSimilarity(String title1, String title2) {
+        if (title1.equalsIgnoreCase(title2)) {
+            //arbitrary large number
+            return 100;
+        }
+        char[] arr1 = title1.toCharArray();
+        char[] arr2 = title2.toCharArray();
+        int length = Math.min(arr1.length, arr2.length);
+        int count = 0;
+        for (int i = 0; i < length; i++) {
+            if (arr1[i] == arr2[i]) {
+                count++;
+            }
+        }
+        return count;
     }
 }

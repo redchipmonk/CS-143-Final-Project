@@ -40,7 +40,7 @@ public class SurveyTree {
         String line = input.nextLine();
         node = new SurveyNode(line);
         //if node is an answer
-        if (node.isLeaf()) {
+        if (line.startsWith("A:")) {
             return node;
         }
         else {

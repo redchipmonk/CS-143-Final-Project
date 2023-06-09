@@ -105,4 +105,12 @@ public class Movie {
     public void setMinutes(int minutes) {
         this.minutes = minutes;
     }
+    /**
+     * Overridden toString() to return what the movie looks like when it is read from a file
+     * @return String representation of movie
+     */
+    @Override
+    public String toString() {
+        return title + "//" + description + "//" + year + "//" + genre + "//" + minutes;
+    }
 }

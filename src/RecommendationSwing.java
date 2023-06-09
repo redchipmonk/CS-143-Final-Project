@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.util.List;
+
 /**
  * This class represents the operations and handling of the GUI. It imports the logic from RecommenderSystem.java
  *
@@ -28,6 +29,8 @@ public class RecommendationSwing extends JFrame {
         data = new RecommenderSystem("movies.txt");
         initializeSurveyTree();
         setTitle("Movie Recommender");
+        ImageIcon img = new ImageIcon("images/logo.png");
+        setIconImage(img.getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
         // Set Nimbus Look and Feel
@@ -37,6 +40,7 @@ public class RecommendationSwing extends JFrame {
             ex.printStackTrace();
         }
         // Create GUI components
+
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         JPanel searchPanel = new JPanel();
@@ -77,14 +81,8 @@ public class RecommendationSwing extends JFrame {
         filterComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String genre = filterComboBox.getSelectedItem().toString();
-                List<String> list = data.filter(genre);
                 movieListModel.clear();
-                for (int i = 0; i < list.size(); i++) {
-                    if (!movieListModel.contains(list.get(i)) && list.get(i).contains(searchField.getText())) {
-                        searchMovies(searchField.getText());
-                        movieListModel.addElement(list.get(i));
-                    }
-                }
+                movieListModel.addAll(data.filter(genre, searchField.getText()));
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -349,20 +347,5 @@ public class RecommendationSwing extends JFrame {
         movieFrame.pack();
         movieFrame.setLocationRelativeTo(null);
         movieFrame.setVisible(true);
-    }
-    /**
-     * Runs the GUI.
-     * @param args command line arguments
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new RecommendationSwing();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 }
