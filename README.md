@@ -1,5 +1,5 @@
 # CS-143-Final-Project
-
+<p>By Alvin Le and Eric Im</p>
 <h3>Description</h3>
 <p>This program simulates a recommendation system for movies with 
 features like search, filter, explore, add, and remove. 
